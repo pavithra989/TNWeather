@@ -47,5 +47,10 @@ public class WeatherController {
     {
         return weatherService.updateWeather(city,weatherUpdate);
     }
-
+    @DeleteMapping("/{city}")
+    public String deleteWeatherCity(@PathVariable String city)
+    {
+        weatherService.deleteWeather(city);
+        return " Weather data for "+city+ "has been deleted";
+    }
 }

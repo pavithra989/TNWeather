@@ -2,7 +2,9 @@ package com.pm.weather.service;
 
 import com.pm.weather.entity.Weather;
 import com.pm.weather.repository.WeatherRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -38,10 +40,16 @@ public class WeatherService {
     {
         return weatherRepo.findAll();
     }
+
     @CachePut(value = "weather", key = "#city")
     public String updateWeather(String city, String weatherUpdate) {
       weatherRepo.findByCity(city).ifPresent(weather->{weather.setForecast(weatherUpdate);weatherRepo.save(weather);});
         return weatherUpdate;
 
+    }
+    @CacheEvict(value = "weather", key = "#city")
+    @Transactional
+    public void deleteWeather(String city) {
+        weatherRepo.deleteByCity(city);
     }
 }
